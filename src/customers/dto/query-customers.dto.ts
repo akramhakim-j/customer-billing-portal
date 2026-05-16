@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Type } from 'class-transformer';
-import { Location } from '@zurich/shared';
+import { Location } from '../../shared';
 
 export class QueryCustomersDto {
   @ApiPropertyOptional({ example: 1, description: 'Page number (1-based)', default: 1 })

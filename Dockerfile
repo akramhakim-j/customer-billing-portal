@@ -5,20 +5,13 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-# Copy workspace manifests first for layer caching
-COPY package.json pnpm-workspace.yaml ./
-COPY packages/shared/package.json ./packages/shared/
-COPY apps/api/package.json ./apps/api/
+COPY package.json pnpm-lock.yaml ./
 
 RUN pnpm install --frozen-lockfile
 
-# Copy source files
-COPY packages/shared/ ./packages/shared/
-COPY apps/api/ ./apps/api/
+COPY . .
 
-# Build shared package then API
-RUN pnpm --filter @zurich/shared build
-RUN pnpm --filter @zurich/api build
+RUN pnpm build
 
 # ── Stage 2: Production ───────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
@@ -29,15 +22,17 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY package.json pnpm-workspace.yaml ./
-COPY packages/shared/package.json ./packages/shared/
-COPY apps/api/package.json ./apps/api/
+COPY package.json pnpm-lock.yaml ./
 
 RUN pnpm install --frozen-lockfile --prod
 
 # Copy compiled output only
-COPY --from=builder /app/apps/api/dist ./apps/api/dist
-COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 3000
+
+CMD ["node", "dist/main"]
+
 
 EXPOSE 3000
 

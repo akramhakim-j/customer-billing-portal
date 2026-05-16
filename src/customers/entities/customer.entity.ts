@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { Location } from '@zurich/shared';
+import { Location } from '../../shared';
 
 @Entity('customers')
 export class Customer {

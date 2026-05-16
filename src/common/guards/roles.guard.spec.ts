@@ -1,7 +1,7 @@
 import { RolesGuard } from './roles.guard';
 import { Reflector } from '@nestjs/core';
 import { ForbiddenException } from '@nestjs/common';
-import { Role } from '@zurich/shared';
+import { Role } from '../../shared';
 import { ExecutionContext } from '@nestjs/common';
 
 const mockContext = (role: Role | undefined): ExecutionContext =>

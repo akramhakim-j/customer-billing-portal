@@ -10,8 +10,7 @@ services:
     build:
       target: builder
     volumes:
-      - ./apps/api:/app/apps/api
-      - ./packages/shared:/app/packages/shared
+      - .:/app
     environment:
       NODE_ENV: development
-    command: pnpm --filter @zurich/api dev
+    command: pnpm dev

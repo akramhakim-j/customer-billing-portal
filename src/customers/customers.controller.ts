@@ -30,7 +30,7 @@ import { PaginatedCustomersDto } from './dto/paginated-customers.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
-import { Role } from '@zurich/shared';
+import { Role } from '../shared';
 
 @ApiTags('customers')
 @ApiBearerAuth('access-token')

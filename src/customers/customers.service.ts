@@ -20,12 +20,16 @@ export class CustomersService {
     private readonly customerRepository: Repository<Customer>,
   ) {}
 
-  async create(createCustomerDto: CreateCustomerDto): Promise<CustomerResponseDto> {
+  async create(
+    createCustomerDto: CreateCustomerDto,
+  ): Promise<CustomerResponseDto> {
     const existing = await this.customerRepository.findOne({
       where: { email: createCustomerDto.email },
     });
     if (existing) {
-      throw new ConflictException(`Customer with email ${createCustomerDto.email} already exists`);
+      throw new ConflictException(
+        `Customer with email ${createCustomerDto.email} already exists`,
+      );
     }
 
     const customer = this.customerRepository.create(createCustomerDto);
@@ -69,7 +73,10 @@ export class CustomersService {
     return this.toResponseDto(customer);
   }
 
-  async update(id: string, updateCustomerDto: UpdateCustomerDto): Promise<CustomerResponseDto> {
+  async update(
+    id: string,
+    updateCustomerDto: UpdateCustomerDto,
+  ): Promise<CustomerResponseDto> {
     const customer = await this.customerRepository.findOne({ where: { id } });
     if (!customer) {
       throw new NotFoundException(`Customer with id ${id} not found`);
@@ -81,7 +88,9 @@ export class CustomersService {
         where: { email: updateCustomerDto.email },
       });
       if (emailExists) {
-        throw new ConflictException(`Email ${updateCustomerDto.email} is already in use`);
+        throw new ConflictException(
+          `Email ${updateCustomerDto.email} is already in use`,
+        );
       }
     }
 
@@ -99,6 +108,8 @@ export class CustomersService {
   }
 
   private toResponseDto(customer: Customer): CustomerResponseDto {
-    return plainToInstance(CustomerResponseDto, customer, { excludeExtraneousValues: true });
+    return plainToInstance(CustomerResponseDto, customer, {
+      excludeExtraneousValues: true,
+    });
   }
 }

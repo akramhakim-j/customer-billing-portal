@@ -4,7 +4,7 @@ import { CustomersController } from './customers.controller';
 import { CustomersService } from './customers.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
-import { Location } from '@zurich/shared';
+import { Location } from '../shared';
 import { CustomerResponseDto } from './dto/customer-response.dto';
 import { PaginatedCustomersDto } from './dto/paginated-customers.dto';
 

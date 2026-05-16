@@ -20,18 +20,18 @@ A RESTful API built with [NestJS](https://nestjs.com/) that manages customer bil
 
 ## Tech Stack
 
-| Layer          | Technology                          |
-|----------------|-------------------------------------|
-| Framework      | NestJS 11                           |
-| Language       | TypeScript 5                        |
-| Database       | PostgreSQL (via TypeORM)            |
-| Auth           | JWT + Passport                      |
-| Validation     | class-validator / class-transformer |
-| Docs           | Swagger / OpenAPI                   |
-| Rate Limiting  | @nestjs/throttler                   |
-| Caching        | @nestjs/cache-manager (in-memory)   |
-| Compression    | compression (gzip)                  |
-| Package Mgr    | pnpm (workspace)                    |
+| Layer         | Technology                          |
+| ------------- | ----------------------------------- |
+| Framework     | NestJS 11                           |
+| Language      | TypeScript 5                        |
+| Database      | PostgreSQL (via TypeORM)            |
+| Auth          | JWT + Passport                      |
+| Validation    | class-validator / class-transformer |
+| Docs          | Swagger / OpenAPI                   |
+| Rate Limiting | @nestjs/throttler                   |
+| Caching       | @nestjs/cache-manager (in-memory)   |
+| Compression   | compression (gzip)                  |
+| Package Mgr   | pnpm (workspace)                    |
 
 ---
 
@@ -162,7 +162,7 @@ All endpoints require a valid **JWT Bearer token**.
 ### Generate a dev token
 
 ```bash
-pnpm --filter @zurich/api run token:generate
+pnpm token:generate
 ```
 
 This prints two tokens — one for `admin` and one for `user` — each valid for 24 hours.
@@ -195,7 +195,7 @@ curl -H "Authorization: Bearer <token>" http://localhost:3000/customers
 All routes are prefixed with `/customers`.
 
 | Method   | Path             | Role        | Description                              |
-|----------|------------------|-------------|------------------------------------------|
+| -------- | ---------------- | ----------- | ---------------------------------------- |
 | `POST`   | `/customers`     | Admin only  | Create a new customer                    |
 | `GET`    | `/customers`     | Admin, User | List all customers (paginated, filtered) |
 | `GET`    | `/customers/:id` | Admin, User | Get a single customer by UUID            |
@@ -204,12 +204,12 @@ All routes are prefixed with `/customers`.
 
 ### Query parameters for `GET /customers`
 
-| Param       | Type   | Description                                   |
-|-------------|--------|-----------------------------------------------|
-| `page`      | number | Page number, 1-based (default: `1`)           |
-| `limit`     | number | Items per page, max 100 (default: `10`)       |
-| `location`  | enum   | Filter by `West Malaysia` or `East Malaysia`  |
-| `productId` | string | Filter by product ID (e.g. `4000`, `5000`)    |
+| Param       | Type   | Description                                  |
+| ----------- | ------ | -------------------------------------------- |
+| `page`      | number | Page number, 1-based (default: `1`)          |
+| `limit`     | number | Items per page, max 100 (default: `10`)      |
+| `location`  | enum   | Filter by `West Malaysia` or `East Malaysia` |
+| `productId` | string | Filter by product ID (e.g. `4000`, `5000`)   |
 
 ### Example paginated response
 
@@ -230,7 +230,7 @@ All routes are prefixed with `/customers`.
 ### `customers` table
 
 | Column         | Type           | Notes                              |
-|----------------|----------------|------------------------------------|
+| -------------- | -------------- | ---------------------------------- |
 | `id`           | UUID (PK)      | Auto-generated                     |
 | `email`        | varchar(255)   | Unique, indexed                    |
 | `first_name`   | varchar(100)   |                                    |
@@ -247,7 +247,7 @@ All routes are prefixed with `/customers`.
 ## Roles & Permissions
 
 | Action          | `admin` | `user` |
-|-----------------|---------|--------|
+| --------------- | ------- | ------ |
 | Create customer | Yes     | No     |
 | List customers  | Yes     | Yes    |
 | Get customer    | Yes     | Yes    |
@@ -263,7 +263,7 @@ Role is read from the `role` field in the JWT payload. No database lookup is per
 Run from the `apps/api` directory or prefix with `pnpm --filter @zurich/api run`:
 
 | Script           | Description                                          |
-|------------------|------------------------------------------------------|
+| ---------------- | ---------------------------------------------------- |
 | `start:dev`      | Start in watch mode (auto-recompile on file changes) |
 | `build`          | Compile TypeScript to `dist/`                        |
 | `start:prod`     | Run compiled output (requires `build` first)         |

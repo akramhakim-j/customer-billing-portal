@@ -9,7 +9,7 @@ import {
   MinLength,
   Matches,
 } from 'class-validator';
-import { Location } from '@zurich/shared';
+import { Location } from '../../shared';
 
 export class CreateCustomerDto {
   @ApiProperty({ example: 'george.bluth@yahoo.com.my', description: 'Unique customer email' })
