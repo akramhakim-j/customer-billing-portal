@@ -31,14 +31,13 @@ A RESTful API built with [NestJS](https://nestjs.com/) that manages customer bil
 | Rate Limiting | @nestjs/throttler                   |
 | Caching       | @nestjs/cache-manager (in-memory)   |
 | Compression   | compression (gzip)                  |
-| Package Mgr   | pnpm (workspace)                    |
+| Package Mgr   | pnpm                                |
 
 ---
 
 ## Project Structure
 
 ```
-apps/api/
 ├── src/
 │   ├── main.ts                    # Bootstrap — Swagger, validation pipe, compression
 │   ├── app.module.ts              # Root module — DB, throttler, cache, middleware
@@ -65,22 +64,22 @@ apps/api/
 │   │   │   └── paginated-customers.dto.ts
 │   │   └── entities/
 │   │       └── customer.entity.ts  # TypeORM entity — maps to `customers` table
-│   └── database/
-│       └── seed.ts                # Standalone seed script (run via pnpm seed)
+│   ├── database/
+│   │   └── seed.ts                # Standalone seed script (run via pnpm seed)
+│   └── shared/                    # Shared enums and types
+│       ├── enums/
+│       │   ├── location.enum.ts   # Location.WEST_MALAYSIA | EAST_MALAYSIA
+│       │   └── role.enum.ts       # Role.ADMIN | Role.USER
+│       └── types/
+│           └── customer.types.ts  # ICustomer, IJwtPayload, IPaginatedResponse
 ├── scripts/
 │   └── generate-token.ts          # Dev utility — prints signed JWTs for testing
+├── test/
+│   └── app.e2e-spec.ts            # End-to-end tests
 ├── .env                           # Local environment variables (not committed)
 ├── .env.example                   # Template for environment variables
 ├── nest-cli.json                  # NestJS CLI config
 └── tsconfig.json                  # TypeScript config
-
-packages/shared/                   # Shared types/enums used across the monorepo
-├── src/
-│   ├── enums/
-│   │   ├── location.enum.ts       # Location.WEST_MALAYSIA | EAST_MALAYSIA
-│   │   └── role.enum.ts           # Role.ADMIN | Role.USER
-│   └── types/
-│       └── customer.types.ts      # ICustomer, IJwtPayload, IPaginatedResponse
 ```
 
 ---
@@ -119,7 +118,7 @@ ADMIN_EMAILS=admin@zurich.com
 - pnpm >= 9
 - PostgreSQL running locally
 
-### 1. Install dependencies (from monorepo root)
+### 1. Install dependencies
 
 ```bash
 pnpm install
@@ -137,13 +136,13 @@ psql -c 'CREATE DATABASE "CUSTOMER_BILLING_PORTAL" OWNER postgres;'
 ### 3. Seed sample data
 
 ```bash
-pnpm --filter @zurich/api run seed
+pnpm seed
 ```
 
 ### 4. Start the API
 
 ```bash
-pnpm --filter @zurich/api run start:dev
+pnpm start:dev
 ```
 
 The API will be available at:
@@ -260,7 +259,7 @@ Role is read from the `role` field in the JWT payload. No database lookup is per
 
 ## Scripts
 
-Run from the `apps/api` directory or prefix with `pnpm --filter @zurich/api run`:
+Run from the project root:
 
 | Script           | Description                                          |
 | ---------------- | ---------------------------------------------------- |
