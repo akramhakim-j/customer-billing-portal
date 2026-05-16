@@ -13,13 +13,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
-} from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
@@ -62,7 +56,11 @@ export class CustomersController {
   @Roles(Role.ADMIN, Role.USER)
   @UseInterceptors(CacheInterceptor)
   @ApiOperation({ summary: 'Get a single customer by ID' })
-  @ApiParam({ name: 'id', description: 'Customer UUID' })
+  @ApiParam({
+    name: 'id',
+    description: 'Customer UUID',
+    example: 'e7f8a9b0-c1d2-3456-efab-789012345678',
+  })
   @ApiResponse({ status: 200, type: CustomerResponseDto })
   @ApiResponse({ status: 404, description: 'Customer not found' })
   findOne(@Param('id', ParseUUIDPipe) id: string): Promise<CustomerResponseDto> {
@@ -72,7 +70,11 @@ export class CustomersController {
   @Patch(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Update customer details or premium paid (admin only)' })
-  @ApiParam({ name: 'id', description: 'Customer UUID' })
+  @ApiParam({
+    name: 'id',
+    description: 'Customer UUID',
+    example: 'e7f8a9b0-c1d2-3456-efab-789012345678',
+  })
   @ApiResponse({ status: 200, type: CustomerResponseDto })
   @ApiResponse({ status: 404, description: 'Customer not found' })
   @ApiResponse({ status: 409, description: 'Email already in use' })
@@ -87,7 +89,11 @@ export class CustomersController {
   @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a customer (admin only)' })
-  @ApiParam({ name: 'id', description: 'Customer UUID' })
+  @ApiParam({
+    name: 'id',
+    description: 'Customer UUID',
+    example: 'e7f8a9b0-c1d2-3456-efab-789012345678',
+  })
   @ApiResponse({ status: 204, description: 'Customer deleted' })
   @ApiResponse({ status: 404, description: 'Customer not found' })
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {

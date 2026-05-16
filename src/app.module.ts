@@ -9,10 +9,19 @@ import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { Customer } from './customers/entities/customer.entity';
 
+function validateConfig(config: Record<string, unknown>) {
+  const required = ['JWT_SECRET', 'DATABASE_PASSWORD'];
+  const missing = required.filter((key) => !config[key]);
+  if (missing.length) {
+    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+  }
+  return config;
+}
+
 @Module({
   imports: [
-    // Config — loads .env globally
-    ConfigModule.forRoot({ isGlobal: true }),
+    // Config — loads .env globally with startup validation
+    ConfigModule.forRoot({ isGlobal: true, validate: validateConfig }),
 
     // PostgreSQL via TypeORM
     TypeOrmModule.forRootAsync({

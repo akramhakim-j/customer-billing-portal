@@ -1,11 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import { Customer } from './entities/customer.entity';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
@@ -18,22 +16,21 @@ export class CustomersService {
   constructor(
     @InjectRepository(Customer)
     private readonly customerRepository: Repository<Customer>,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
   ) {}
 
-  async create(
-    createCustomerDto: CreateCustomerDto,
-  ): Promise<CustomerResponseDto> {
+  async create(createCustomerDto: CreateCustomerDto): Promise<CustomerResponseDto> {
     const existing = await this.customerRepository.findOne({
       where: { email: createCustomerDto.email },
     });
     if (existing) {
-      throw new ConflictException(
-        `Customer with email ${createCustomerDto.email} already exists`,
-      );
+      throw new ConflictException(`Customer with email ${createCustomerDto.email} already exists`);
     }
 
     const customer = this.customerRepository.create(createCustomerDto);
     const saved = await this.customerRepository.save(customer);
+    await Promise.all(this.cacheManager.stores.map((s) => s.clear()));
     return this.toResponseDto(saved);
   }
 
@@ -73,10 +70,7 @@ export class CustomersService {
     return this.toResponseDto(customer);
   }
 
-  async update(
-    id: string,
-    updateCustomerDto: UpdateCustomerDto,
-  ): Promise<CustomerResponseDto> {
+  async update(id: string, updateCustomerDto: UpdateCustomerDto): Promise<CustomerResponseDto> {
     const customer = await this.customerRepository.findOne({ where: { id } });
     if (!customer) {
       throw new NotFoundException(`Customer with id ${id} not found`);
@@ -88,14 +82,13 @@ export class CustomersService {
         where: { email: updateCustomerDto.email },
       });
       if (emailExists) {
-        throw new ConflictException(
-          `Email ${updateCustomerDto.email} is already in use`,
-        );
+        throw new ConflictException(`Email ${updateCustomerDto.email} is already in use`);
       }
     }
 
     Object.assign(customer, updateCustomerDto);
     const saved = await this.customerRepository.save(customer);
+    await Promise.all(this.cacheManager.stores.map((s) => s.clear()));
     return this.toResponseDto(saved);
   }
 
@@ -105,6 +98,7 @@ export class CustomersService {
       throw new NotFoundException(`Customer with id ${id} not found`);
     }
     await this.customerRepository.remove(customer);
+    await Promise.all(this.cacheManager.stores.map((s) => s.clear()));
   }
 
   private toResponseDto(customer: Customer): CustomerResponseDto {

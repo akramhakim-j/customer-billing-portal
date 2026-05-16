@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConflictException, NotFoundException } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { CustomersService } from './customers.service';
 import { Customer } from './entities/customer.entity';
 import { Location } from '../shared';
@@ -35,12 +36,16 @@ type MockRepository<T extends object = object> = Partial<Record<keyof Repository
 describe('CustomersService', () => {
   let service: CustomersService;
   let repo: MockRepository<Customer>;
+  let cacheManager: { stores: { clear: jest.Mock }[] };
 
   beforeEach(async () => {
+    cacheManager = { stores: [{ clear: jest.fn().mockResolvedValue(undefined) }] };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CustomersService,
         { provide: getRepositoryToken(Customer), useFactory: mockRepository },
+        { provide: CACHE_MANAGER, useValue: cacheManager },
       ],
     }).compile();
 
@@ -151,8 +156,8 @@ describe('CustomersService', () => {
     it('should throw ConflictException if new email is already taken', async () => {
       const dto: UpdateCustomerDto = { email: 'taken@example.com' };
       const existingWithSameEmail: Customer = { ...mockCustomer, id: 'other-id' };
-      repo.findOne!
-        .mockResolvedValueOnce(mockCustomer) // find by id
+      repo
+        .findOne!.mockResolvedValueOnce(mockCustomer) // find by id
         .mockResolvedValueOnce(existingWithSameEmail); // find by new email
       await expect(service.update('test-uuid-1234', dto)).rejects.toThrow(ConflictException);
     });

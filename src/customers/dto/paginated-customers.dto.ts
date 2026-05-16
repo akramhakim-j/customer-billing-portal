@@ -5,13 +5,13 @@ export class PaginatedCustomersDto {
   @ApiProperty({ type: [CustomerResponseDto] })
   data: CustomerResponseDto[];
 
-  @ApiProperty({ example: 50 })
+  @ApiProperty({ example: 24 })
   total: number;
 
-  @ApiProperty({ example: 1 })
+  @ApiProperty({ example: 2 })
   page: number;
 
-  @ApiProperty({ example: 10 })
+  @ApiProperty({ example: 5 })
   limit: number;
 
   @ApiProperty({ example: 5 })

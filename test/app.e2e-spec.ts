@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AppModule } from '../src/app.module';
 import { Customer } from '../src/customers/entities/customer.entity';
-import { Location } from '@zurich/shared';
+import { Location } from '../src/shared';
 
 /**
  * E2E tests — run against a mocked repository.
@@ -175,10 +175,7 @@ describe('AppController (e2e)', () => {
   });
 
   it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+    return request(app.getHttpServer()).get('/').expect(200).expect('Hello World!');
   });
 
   afterEach(async () => {
